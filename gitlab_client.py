@@ -7,13 +7,14 @@ import gitlab
 
 class GitlabChanges:
 
-    def __init__(self, gitlab_url, gitlab_token, project_id, merge_request_iid):
+    def __init__(self, gitlab_url, gitlab_token, merge_request_iid, source_project_id):
         self.gitlab_url = gitlab_url
         self.gitlab_token = gitlab_token
-        self.project_id = project_id
         self.merge_request_iid = merge_request_iid
 
         self.gitlab_api = gitlab.Gitlab(self.gitlab_url, private_token=self.gitlab_token)
+        self.project_id = self.gitlab_api.projects.get(source_project_id).forked_from_project['id']
+        self.source_project_id = source_project_id
 
         self.merge_request = None
         self.source_branch = None
@@ -77,17 +78,20 @@ class GitlabChanges:
                 if not found:
                     os.remove(file_path)
 
-    def run(self, repo_source, repo_target):
-        if repo_target is None:
-            repo_target = self.get_project_ssh_url(self.project_id)
+    def run(self, path):
+        repo_target = self.get_project_ssh_url(self.project_id)
+        repo_source = self.get_project_ssh_url(self.source_project_id)
+
+        path_source = path + "/repo_source"
+        path_target = path + "/repo_target"
 
         self.get_merge_request_changes()
-        self.clone_repo(repo_source, self.target_branch, "repo_source")
-        self.clone_repo(repo_target, self.source_branch, "repo_target")
-        self.remove_files_not_in_changes('repo_source', self.changes, 'old_path')
-        self.remove_files_not_in_changes('repo_target', self.changes, 'new_path')
-        self.remove_empty_dirs('repo_source')
-        self.remove_empty_dirs('repo_target')
+        self.clone_repo(repo_source, self.target_branch, path_source)
+        self.clone_repo(repo_target, self.source_branch, path_target)
+        self.remove_files_not_in_changes(path_source, self.changes, 'old_path')
+        self.remove_files_not_in_changes(path_target, self.changes, 'new_path')
+        self.remove_empty_dirs(path_source)
+        self.remove_empty_dirs(path_target)
 
     def get_project_ssh_url(self, project_id):
         return self.gitlab_api.projects.get(project_id).ssh_url_to_repo
