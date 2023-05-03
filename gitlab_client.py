@@ -78,6 +78,9 @@ class GitlabChanges:
                     os.remove(file_path)
 
     def run(self, repo_source, repo_target):
+        if repo_target is None:
+            repo_target = self.get_project_ssh_url(self.project_id)
+
         self.get_merge_request_changes()
         self.clone_repo(repo_source, self.target_branch, "repo_source")
         self.clone_repo(repo_target, self.source_branch, "repo_target")
@@ -85,6 +88,9 @@ class GitlabChanges:
         self.remove_files_not_in_changes('repo_target', self.changes, 'new_path')
         self.remove_empty_dirs('repo_source')
         self.remove_empty_dirs('repo_target')
+
+    def get_project_ssh_url(self, project_id):
+        return self.gitlab_api.projects.get(project_id).ssh_url_to_repo
 
     def add_comments(self, comments):
         threads = self.get_merge_request_threads()
