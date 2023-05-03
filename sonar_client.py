@@ -87,7 +87,7 @@ class SonarClient:
             found = False
 
             if 'hash' not in issue_source:
-                print("ERRO: " + issue_source)
+                print(issue_source)
                 continue
 
             hash_source = issue_source['hash']
@@ -95,7 +95,7 @@ class SonarClient:
             for issue_target in issues_target:
 
                 if 'hash' not in issue_target:
-                    print("ERRO: " + issue_target)
+                    print(issue_target)
                     continue
 
                 hash_target = issue_target['hash']
