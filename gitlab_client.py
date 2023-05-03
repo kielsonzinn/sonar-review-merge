@@ -7,14 +7,15 @@ import gitlab
 
 class GitlabChanges:
 
-    def __init__(self, gitlab_url, gitlab_token, merge_request_iid, source_project_id):
+    def __init__(self, gitlab_url, gitlab_token, merge_request_iid, project_id):
         self.gitlab_url = gitlab_url
+        self.project_id = project_id
         self.gitlab_token = gitlab_token
         self.merge_request_iid = merge_request_iid
 
         self.gitlab_api = gitlab.Gitlab(self.gitlab_url, private_token=self.gitlab_token)
-        self.project_id = self.gitlab_api.projects.get(source_project_id).forked_from_project['id']
-        self.source_project_id = source_project_id
+        self.source_project_id = self.gitlab_api.projects.get(project_id).mergerequests.get(
+            merge_request_iid).source_project_id
 
         self.merge_request = None
         self.source_branch = None
@@ -86,10 +87,10 @@ class GitlabChanges:
         path_target = path + "/repo_target"
 
         self.get_merge_request_changes()
-        self.clone_repo(repo_source, self.target_branch, path_source)
-        self.clone_repo(repo_target, self.source_branch, path_target)
-        self.remove_files_not_in_changes(path_source, self.changes, 'old_path')
-        self.remove_files_not_in_changes(path_target, self.changes, 'new_path')
+        self.clone_repo(repo_target, self.target_branch, path_target)
+        self.clone_repo(repo_source, self.source_branch, path_source)
+        self.remove_files_not_in_changes(path_source, self.changes, 'new_path')
+        self.remove_files_not_in_changes(path_target, self.changes, 'old_path')
         self.remove_empty_dirs(path_source)
         self.remove_empty_dirs(path_target)
 

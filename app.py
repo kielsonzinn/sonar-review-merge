@@ -10,7 +10,7 @@ if __name__ == "__main__":
     parser.add_argument("--GIT_LAB_URL", help="Digite a url do Git Lab")
     parser.add_argument("--GIT_LAB_TOKEN", help="Digite o token do Git Lab")
     parser.add_argument("--GIT_LAB_MERGE_REQUEST_ID", help="Digite o id do merge request do Git Lab")
-    parser.add_argument("--GIT_LAB_SOURCE_PROJECT_ID", help="Digite o id do projeto source do Git Lab")
+    parser.add_argument("--GIT_LAB_PROJECT_ID", help="Digite o id do projeto source do Git Lab")
     parser.add_argument("--SONAR_QUBE_URL", help="Digite a url do Sonar Qube")
     parser.add_argument("--SONAR_QUBE_AUTH_TYPE", help="Digite o token do Sonar Qube")
     parser.add_argument("--SONAR_QUBE_TOKEN", help="Digite o token do Sonar Qube")
@@ -25,7 +25,7 @@ if __name__ == "__main__":
         gitlab_url=args.GIT_LAB_URL,
         gitlab_token=args.GIT_LAB_TOKEN,
         merge_request_iid=args.GIT_LAB_MERGE_REQUEST_ID,
-        source_project_id=args.GIT_LAB_SOURCE_PROJECT_ID,
+        project_id=args.GIT_LAB_PROJECT_ID,
     )
 
     gitlab_client.run(args.SOURCE_PATH)
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     ).get_comments(
         scanner_home=args.SONAR_QUBE_SCANNER_HOME,
         source_path=args.SOURCE_PATH,
-        project_id=gitlab_client.project_id,
+        project_id=args.GIT_LAB_PROJECT_ID,
         merge_request_id=args.GIT_LAB_MERGE_REQUEST_ID,
     )
 
