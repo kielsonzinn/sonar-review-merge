@@ -8,6 +8,7 @@ if __name__ == "__main__":
     print("Inicio: " + datetime.now().strftime("%H:%M:%S"))
     parser = argparse.ArgumentParser()
     parser.add_argument("--GIT_LAB_URL", help="Digite a url do Git Lab")
+    parser.add_argument("--GIT_LAB_USER", help="Digite o usuario do Git Lab")
     parser.add_argument("--GIT_LAB_TOKEN", help="Digite o token do Git Lab")
     parser.add_argument("--GIT_LAB_MERGE_REQUEST_ID", help="Digite o id do merge request do Git Lab")
     parser.add_argument("--GIT_LAB_PROJECT_ID", help="Digite o id do projeto source do Git Lab")
@@ -28,7 +29,11 @@ if __name__ == "__main__":
         project_id=args.GIT_LAB_PROJECT_ID,
     )
 
-    gitlab_client.run(args.SOURCE_PATH)
+    gitlab_client.run(
+        path=args.SOURCE_PATH,
+        user=args.GIT_LAB_USER,
+        token=args.GIT_LAB_TOKEN,
+    )
 
     comments = SonarClient(
         sonar_token=args.SONAR_QUBE_TOKEN,

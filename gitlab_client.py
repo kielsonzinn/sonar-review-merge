@@ -79,9 +79,15 @@ class GitlabChanges:
                 if not found:
                     os.remove(file_path)
 
-    def run(self, path):
-        repo_target = self.get_project_ssh_url(self.project_id)
-        repo_source = self.get_project_ssh_url(self.source_project_id)
+    def run(self, path, user, token):
+        repo_target = self.get_project_http_url(self.project_id)
+        repo_source = self.get_project_http_url(self.source_project_id)
+
+        target_index = repo_target.index("://") + 3
+        source_index = repo_source.index("://") + 3
+
+        repo_target = repo_target[0:target_index] + f"{user}:{token}@" + repo_target[target_index:]
+        repo_source = repo_source[0:source_index] + f"{user}:{token}@" + repo_source[source_index:]
 
         path_source = path + "/repo_source"
         path_target = path + "/repo_target"
@@ -94,8 +100,8 @@ class GitlabChanges:
         self.remove_empty_dirs(path_source)
         self.remove_empty_dirs(path_target)
 
-    def get_project_ssh_url(self, project_id):
-        return self.gitlab_api.projects.get(project_id).ssh_url_to_repo
+    def get_project_http_url(self, project_id):
+        return self.gitlab_api.projects.get(project_id).http_url_to_repo
 
     def add_comments(self, comments):
         threads = self.get_merge_request_threads()
