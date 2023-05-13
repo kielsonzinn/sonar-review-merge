@@ -19,6 +19,7 @@ if __name__ == "__main__":
     parser.add_argument("--SONAR_QUBE_LOGIN_PASSWORD", help="Digite a senha do login token do Sonar Qube")
     parser.add_argument("--SONAR_QUBE_SCANNER_HOME", help="Digite o path do sonnar scanner")
     parser.add_argument("--SOURCE_PATH", help="Digite o path dos projetos")
+    parser.add_argument("--SONAR_QUBE_RULES", help="Digite a lista de rules")
 
     args = parser.parse_args()
 
@@ -46,6 +47,7 @@ if __name__ == "__main__":
         source_path=args.SOURCE_PATH,
         project_id=args.GIT_LAB_PROJECT_ID,
         merge_request_id=args.GIT_LAB_MERGE_REQUEST_ID,
+        rules=eval(args.SONAR_QUBE_RULES),
     )
 
     gitlab_client.add_comments(comments)

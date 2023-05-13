@@ -62,7 +62,7 @@ class SonarClient:
         auth = (self.login_username, self.login_password)
         return auth
 
-    def get_comments(self, scanner_home, source_path, project_id, merge_request_id):
+    def get_comments(self, scanner_home, source_path, project_id, merge_request_id, rules):
         __PROJECT_KEY = f"code-review-{project_id}-{merge_request_id}"
 
         self.delete_project(__PROJECT_KEY)
@@ -85,6 +85,9 @@ class SonarClient:
 
         for issue_source in issues_source:
             found = False
+
+            if issue_source['rule'] not in rules:
+                continue
 
             if 'hash' not in issue_source:
                 print(issue_source)
